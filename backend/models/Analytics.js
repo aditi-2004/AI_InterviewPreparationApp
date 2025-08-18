@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const analyticsSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   topic: String,
@@ -11,6 +10,7 @@ const analyticsSchema = new mongoose.Schema({
     medium: { total: { type: Number, default: 0 }, correct: { type: Number, default: 0 } },
     hard: { total: { type: Number, default: 0 }, correct: { type: Number, default: 0 } }
   },
+
   last_updated: { type: Date, default: Date.now }
 }, { timestamps: true });
 
