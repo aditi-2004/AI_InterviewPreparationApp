@@ -98,7 +98,7 @@ const AnalyticsDashboard = () => {
     setLoadingDetails((prev) => ({ ...prev, [interviewId]: true }));
     
     try {
-      console.log('=== DETAILED DEBUG ===');
+      console.log('===DETAILED DEBUG===');
       console.log('Fetching details for interviewId:', interviewId);
       console.log('interviewAPI object:', interviewAPI);
       console.log('Available methods:', Object.keys(interviewAPI || {}));
@@ -358,7 +358,6 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
       </div>
-
       {/* Charts Container */}
       <div style={{
         display: 'grid',
