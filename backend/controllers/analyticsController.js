@@ -1,6 +1,8 @@
 const Analytics = require('../models/Analytics');
 const Interview = require('../models/Interview');
 
+
+
 const getUserAnalytics = async (req, res) => {
   try {
     const analytics = await Analytics.find({ user_id: req.user._id });
