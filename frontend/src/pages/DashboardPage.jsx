@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AnalyticsDashboard from '../components/AnalyticsDashboard';
@@ -8,6 +8,12 @@ const DashboardPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [debugInfo, setDebugInfo] = useState([]);
+
   const handleStartInterview = () => {
     navigate('/interview');
   };
@@ -15,6 +21,67 @@ const DashboardPage = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const addDebugInfo = (message) => {
+    const timestamp = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
+    setDebugInfo(prev => [...prev, { message, timestamp }]);
+  };
+
+  const handleTopicClick = async (topic) => {
+    setSelectedTopic(topic);
+    setLoading(true);
+    setError(null);
+    setDebugInfo([]); 
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const attemptMessage = `Attempt ${attempt} to fetch questions for ${topic}`;
+        addDebugInfo(attemptMessage);
+        console.log(`${attemptMessage} at ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}`);
+        
+        const response = await fetch(`http://localhost:5000/api/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        const statusMessage = `Response status: ${response.status}`;
+        addDebugInfo(statusMessage);
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        const dataMessage = `Received data: ${JSON.stringify(data, null, 2)}`;
+        addDebugInfo(dataMessage);
+        console.log('Parsed Response Data:', data);
+        
+        if (data.success && Array.isArray(data.questions)) {
+          setQuestions(data.questions);
+          addDebugInfo(`Successfully loaded ${data.questions.length} questions`);
+          setLoading(false);
+          return;
+        } else {
+          throw new Error('Invalid response format: "questions" array not found or success is false');
+        }
+      } catch (err) {
+        const errorMessage = `Error fetching questions (Attempt ${attempt}): ${err.message}`;
+        addDebugInfo(errorMessage);
+        console.error(errorMessage);
+        if (attempt === 3) {
+          setError(`Failed to load questions. Please try again. Error: ${err.message}`);
+        }
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedTopic(null);
+    setQuestions([]);
+    setError(null);
+    setDebugInfo([]);
   };
 
   return (
@@ -82,60 +149,104 @@ const DashboardPage = () => {
                   <h4>View Analytics</h4>
                   <p>Check your performance metrics and progress</p>
                 </div>
-                
-                {/* <div className="action-card">
-                  <div className="action-icon">📚</div>
-                  <h4>Study Resources</h4>
-                  <p>Access curated materials for interview preparation</p>
-                </div>
-                
-                <div className="action-card">
-                  <div className="action-icon">⚙️</div>
-                  <h4>Settings</h4>
-                  <p>Customize your interview preferences and topics</p>
-                </div> */}
               </div>
             </div>
 
             <div className="topics-section">
               <h3>Popular Interview Topics</h3>
               <div className="topics-grid">
-                <div className="topic-card">
-                  <div className="topic-icon">💻</div>
-                  <h4>JavaScript</h4>
-                  <p>ES6+, async/await, closures, and more</p>
-                </div>
-                <div className="topic-card">
-                  <div className="topic-icon">🗃️</div>
-                  <h4>Data Structures</h4>
-                  <p>Arrays, trees, graphs, hash tables</p>
-                </div>
-                <div className="topic-card">
-                  <div className="topic-icon">⚡</div>
-                  <h4>Algorithms</h4>
-                  <p>Sorting, searching, dynamic programming</p>
-                </div>
-                <div className="topic-card">
-                  <div className="topic-icon">🏗️</div>
-                  <h4>System Design</h4>
-                  <p>Scalability, architecture, distributed systems</p>
-                </div>
-                <div className="topic-card">
-                  <div className="topic-icon">🗄️</div>
-                  <h4>DBMS</h4>
-                  <p>SQL queries, normalization, indexing</p>
-                </div>
-                <div className="topic-card">
-                  <div className="topic-icon">⚛️</div>
-                  <h4>React</h4>
-                  <p>Hooks, state management, performance</p>
-                </div>
+                {[
+                  { name: 'JavaScript', icon: '💻', description: 'ES6+, async/await, closures, and more' },
+                  { name: 'Data Structures', icon: '🗃️', description: 'Arrays, trees, graphs, hash tables' },
+                  { name: 'Algorithms', icon: '⚡', description: 'Sorting, searching, dynamic programming' },
+                  { name: 'System Design', icon: '🏗️', description: 'Scalability, architecture, distributed systems' },
+                  { name: 'DBMS', icon: '🗄️', description: 'SQL queries, normalization, indexing' },
+                  { name: 'React', icon: '⚛️', description: 'Hooks, state management, performance' },
+                ].map((topic) => (
+                  <div key={topic.name} className="topic-card" onClick={() => handleTopicClick(topic.name)}>
+                    <div className="topic-icon">{topic.icon}</div>
+                    <h4>{topic.name}</h4>
+                    <p>{topic.description}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         ) : (
           <div className="analytics-content">
             <AnalyticsDashboard />
+          </div>
+        )}
+
+        {/* Popup Modal */}
+        {selectedTopic && (
+          <div className="modal-overlay" onClick={handleClosePopup}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>Top 10 Interview Questions for {selectedTopic}</h3>
+                <button className="close-btn" onClick={handleClosePopup}>×</button>
+              </div>
+              
+              {/* Debug Information Box */}
+              {debugInfo.length > 0 && (
+                <div className="debug-box">
+                  <h4>📊 Request Information</h4>
+                  <div className="debug-content">
+                    {debugInfo.map((info, index) => (
+                      <div key={index} className="debug-item">
+                        <span className="debug-timestamp">[{info.timestamp}]</span>
+                        <span className="debug-message">{info.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {loading && (
+                <div className="loading-box">
+                  <div className="loading-spinner"></div>
+                  <p>Loading questions...</p>
+                </div>
+              )}
+              
+              {error && (
+                <div className="error-box">
+                  <p>❌ {error}</p>
+                </div>
+              )}
+              
+              {!loading && !error && questions.length > 0 && (
+                <div className="questions-container">
+                  <div className="success-message">
+                    ✅ Successfully loaded {questions.length} questions
+                  </div>
+                  <div className="questions-list">
+                    {questions.map((q, index) => (
+                      <div key={index} className="question-item">
+                        <div className="question-header">
+                          <strong>Question {index + 1}:</strong>
+                        </div>
+                        <div className="question-text">{q.question}</div>
+                        <div className="answer-section">
+                          <em>Ideal Answer:</em>
+                          <div className="answer-text">{q.ideal_answer}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {!loading && !error && questions.length === 0 && debugInfo.length > 0 && (
+                <div className="no-questions-box">
+                  <p>No questions available at the moment.</p>
+                </div>
+              )}
+              
+              <div className="modal-footer">
+                <button className="close-button" onClick={handleClosePopup}>Close</button>
+              </div>
+            </div>
           </div>
         )}
       </main>
@@ -341,6 +452,228 @@ const DashboardPage = () => {
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+        
+        .modal-content {
+          background: white;
+          border: 2px solid #3498db;
+          border-radius: 12px;
+          width: 90%;
+          max-width: 900px;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+          position: relative;
+          max-height: 90vh;
+          overflow-y: auto;
+          animation: slideIn 0.3s ease-out;
+        }
+        
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem 2rem;
+          border-bottom: 1px solid #eee;
+          background: #f8f9fa;
+          border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-header h3 {
+          margin: 0;
+          color: #2c3e50;
+        }
+        
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: #666;
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+          background: #e9ecef;
+          color: #333;
+        }
+        
+        .debug-box {
+          margin: 1rem 2rem;
+          padding: 1rem;
+          background: #f8f9fa;
+          border: 1px solid #dee2e6;
+          border-radius: 6px;
+          border-left: 4px solid #007bff;
+        }
+        
+        .debug-box h4 {
+          margin: 0 0 0.5rem 0;
+          color: #007bff;
+          font-size: 0.9rem;
+        }
+        
+        .debug-content {
+          max-height: 200px;
+          overflow-y: auto;
+          font-family: 'Courier New', monospace;
+          font-size: 0.8rem;
+        }
+        
+        .debug-item {
+          margin: 0.25rem 0;
+          display: block;
+          word-wrap: break-word;
+        }
+        
+        .debug-timestamp {
+          color: #6c757d;
+          font-weight: bold;
+        }
+        
+        .debug-message {
+          color: #495057;
+          margin-left: 0.5rem;
+        }
+        
+        .loading-box {
+          padding: 2rem;
+          text-align: center;
+          color: #007bff;
+        }
+        
+        .loading-spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #007bff;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        .error-box {
+          margin: 1rem 2rem;
+          padding: 1rem;
+          background: #f8d7da;
+          border: 1px solid #f5c6cb;
+          border-radius: 6px;
+          color: #721c24;
+        }
+        
+        .success-message {
+          margin: 1rem 2rem;
+          padding: 0.75rem;
+          background: #d4edda;
+          border: 1px solid #c3e6cb;
+          border-radius: 6px;
+          color: #155724;
+          text-align: center;
+          font-weight: 500;
+        }
+        
+        .questions-container {
+          padding: 0 2rem 1rem;
+        }
+        
+        .questions-list {
+          margin-top: 1rem;
+        }
+        
+        .question-item {
+          margin: 1.5rem 0;
+          padding: 1.5rem;
+          background: #f9f9f9;
+          border-radius: 8px;
+          border-left: 4px solid #3498db;
+        }
+        
+        .question-header {
+          color: #2c3e50;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+        
+        .question-text {
+          color: #34495e;
+          margin-bottom: 1rem;
+          font-size: 1.05rem;
+          line-height: 1.5;
+        }
+        
+        .answer-section {
+          color: #666;
+        }
+        
+        .answer-text {
+          margin-top: 0.5rem;
+          padding: 1rem;
+          background: white;
+          border-radius: 4px;
+          border: 1px solid #e9ecef;
+          line-height: 1.6;
+        }
+        
+        .no-questions-box {
+          padding: 2rem;
+          text-align: center;
+          color: #6c757d;
+        }
+        
+        .modal-footer {
+          padding: 1rem 2rem;
+          border-top: 1px solid #eee;
+          text-align: right;
+          background: #f8f9fa;
+          border-radius: 0 0 10px 10px;
+        }
+        
+        .close-button {
+          padding: 0.75rem 1.5rem;
+          background: #3498db;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 500;
+          transition: background 0.2s;
+        }
+        
+        .close-button:hover {
+          background: #2980b9;
+        }
+        
+        @keyframes slideIn {
+          from {
+            transform: translateY(-20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        
         @media (max-width: 1024px) {
           .header-content {
             flex-direction: column;
@@ -385,6 +718,19 @@ const DashboardPage = () => {
           .nav-tabs {
             width: 100%;
             justify-content: center;
+          }
+          
+          .modal-content {
+            width: 95%;
+            max-height: 95vh;
+          }
+          
+          .modal-header, .questions-container, .modal-footer {
+            padding: 1rem;
+          }
+          
+          .debug-box {
+            margin: 1rem;
           }
         }
       `}</style>
