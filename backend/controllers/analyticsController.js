@@ -1,7 +1,14 @@
+// Updated analyticsController.js
 const Analytics = require('../models/Analytics');
 const Interview = require('../models/Interview');
 
-
+function getISOWeek(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
 
 const getUserAnalytics = async (req, res) => {
   try {
@@ -28,17 +35,21 @@ const getUserAnalytics = async (req, res) => {
       summary.topicWisePerformance.push({
         topic: item.topic,
         accuracy: item.accuracy,
-        totalQuestions: item.total_questions
+        totalQuestions: item.total_questions,
+        correctAnswers: item.correct_answers
       });
 
+      // Aggregate difficulty stats
       Object.keys(summary.difficultyWisePerformance).forEach(diff => {
         summary.difficultyWisePerformance[diff].total += item.difficulty_stats[diff].total;
         summary.difficultyWisePerformance[diff].correct += item.difficulty_stats[diff].correct;
       });
     });
 
+    // Calculate overall accuracy
     summary.overallAccuracy = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
 
+    // Calculate difficulty accuracies
     Object.keys(summary.difficultyWisePerformance).forEach(diff => {
       const stats = summary.difficultyWisePerformance[diff];
       stats.accuracy = stats.total > 0 ? (stats.correct / stats.total) * 100 : 0;
@@ -59,11 +70,28 @@ const getProgressTrends = async (req, res) => {
       createdAt: { $gte: thirtyDaysAgo }
     }).sort({ createdAt: 1 });
 
-    const trends = interviews.map(interview => ({
-      date: interview.createdAt.toISOString().split('T')[0],
-      accuracy: interview.totalQuestions > 0 ? (interview.correctAnswers / interview.totalQuestions) * 100 : 0,
-      topic: interview.topic
-    }));
+    const trendsMap = {};
+
+    interviews.forEach(interview => {
+      const date = interview.createdAt;
+      const year = date.getFullYear();
+      const week = getISOWeek(date);
+      const key = `${year}-W${String(week).padStart(2, '0')}`;
+
+      if (!trendsMap[key]) {
+        trendsMap[key] = { correct: 0, total: 0 };
+      }
+
+      trendsMap[key].correct += interview.correctAnswers;
+      trendsMap[key].total += interview.totalQuestions;
+    });
+
+    const trends = Object.keys(trendsMap)
+      .sort()
+      .map(key => ({
+        date: key,
+        accuracy: trendsMap[key].total > 0 ? (trendsMap[key].correct / trendsMap[key].total) * 100 : 0
+      }));
 
     res.json(trends);
   } catch (error) {
