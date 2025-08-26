@@ -1,32 +1,41 @@
-AI Interview Preparation App
-│
-├── Frontend (React.js)
-│     ├── Authentication: Signup, Login, Profile
-│     ├── Dashboard: User progress & practice sets
-│     ├── Practice Modules: Coding, MCQs, Mock Interviews
-│     ├── AI-Powered Chatbot (Q&A assistant)
-│     ├── Mock Interview UI (Q&A + Feedback)
-│     └── API Integration (Axios/Fetch)
-│
-├── Backend (Node.js + Express.js)
-│     ├── Authentication:
-│     │      └── JWT-based auth, bcrypt password hashing
-│     ├── REST APIs:
-│     │      ├── User APIs (signup, login, profile, progress)
-│     │      ├── Question APIs (fetch coding/MCQ/interview Qs)
-│     │      ├── AI APIs (send user queries → get AI answers)
-│     │      └── Result APIs (store & fetch user performance)
-│     ├── WebSockets (Socket.io):
-│     │      └── Real-time mock interview sessions (Q&A, feedback)
-│     ├── Database (MongoDB + Mongoose):
-│     │      ├── User collection
-│     │      └── Results/Progress collection
-│     └── Middleware & Security:
-│            ├── express.json() parsing
-│            ├── Auth middleware (JWT verify)
-│            └── Error handling
-│
-└── AI Integration
-       ├── Resume Analysis & Feedback
-       ├── AI-based Question Generation
-       └── Smart Interview Feedback (strengths/weaknesses)
+                           ┌─────────────────────┐
+                           │        User         │     │
+                           └─────────┬───────────┘
+                                     │
+              ┌──────────────────────┼──────────────────────┐
+              │                      │                      │
+              v                      v                      v
+   ┌───────────────────┐   ┌───────────────────┐   ┌───────────────────┐
+   │ Authentication UI │   │   Dashboard UI    │   │   AI Chatbot UI   │
+   │ (Signup/Login)    │   │ (Progress, Stats) │   │  (Q&A Assistant)  │
+   └─────────┬─────────┘   └─────────┬─────────┘   └─────────┬─────────┘
+             │                       │                       │
+             └──────────────┬────────┴───────────┬───────────┘
+                            │                    │
+                            v                    v
+                ┌───────────────────┐   ┌───────────────────┐
+                │  REST API Calls   │   │ AI API Integration │
+                │  (Axios/Fetch)    │   │ (User → AI Model)  │
+                └─────────┬─────────┘   └─────────┬─────────┘
+                          │                       │
+                          v                       v
+      ┌───────────────────────────────────────────┐
+      │          Backend (Node.js + Express)       │
+      ├───────────────────────────────────────────┤
+      │ Auth: JWT + bcrypt                        │
+      │ User APIs (signup/login/profile/progress) │
+      │ Question APIs (fetch interview Qs)        │
+      │ AI APIs (query to AI model)               │
+      │ Results API (store/fetch performance)     │
+      │ Middleware: JSON parsing, JWT verify,     │
+      │             Error handling                │
+      └─────────┬────────────────────────┬────────┘
+                │                        │
+                v                        v
+      ┌───────────────────┐      ┌─────────────────────────┐
+      │   MongoDB (DB)    │      │   AI Integration Layer   │
+      ├───────────────────┤      ├─────────────────────────┤
+      │ User Collection   │     
+      │ Results/Progress  │      │ AI-based Q Gen.          │
+      │ Question Bank     │      │ Smart Interview Feedback │
+      └───────────────────┘      └─────────────────────────┘
