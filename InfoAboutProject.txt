@@ -1,0 +1,32 @@
+AI Interview Preparation App
+│
+├── Frontend (React.js)
+│     ├── Authentication: Signup, Login, Profile
+│     ├── Dashboard: User progress & practice sets
+│     ├── Practice Modules: Coding, MCQs, Mock Interviews
+│     ├── AI-Powered Chatbot (Q&A assistant)
+│     ├── Mock Interview UI (Q&A + Feedback)
+│     └── API Integration (Axios/Fetch)
+│
+├── Backend (Node.js + Express.js)
+│     ├── Authentication:
+│     │      └── JWT-based auth, bcrypt password hashing
+│     ├── REST APIs:
+│     │      ├── User APIs (signup, login, profile, progress)
+│     │      ├── Question APIs (fetch coding/MCQ/interview Qs)
+│     │      ├── AI APIs (send user queries → get AI answers)
+│     │      └── Result APIs (store & fetch user performance)
+│     ├── WebSockets (Socket.io):
+│     │      └── Real-time mock interview sessions (Q&A, feedback)
+│     ├── Database (MongoDB + Mongoose):
+│     │      ├── User collection
+│     │      └── Results/Progress collection
+│     └── Middleware & Security:
+│            ├── express.json() parsing
+│            ├── Auth middleware (JWT verify)
+│            └── Error handling
+│
+└── AI Integration
+       ├── Resume Analysis & Feedback
+       ├── AI-based Question Generation
+       └── Smart Interview Feedback (strengths/weaknesses)
