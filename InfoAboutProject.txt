@@ -1,0 +1,41 @@
+                           ┌─────────────────────┐
+                           │        User         │     │
+                           └─────────┬───────────┘
+                                     │
+              ┌──────────────────────┼──────────────────────┐
+              │                      │                      │
+              v                      v                      v
+   ┌───────────────────┐   ┌───────────────────┐   ┌───────────────────┐
+   │ Authentication UI │   │   Dashboard UI    │   │   AI Chatbot UI   │
+   │ (Signup/Login)    │   │ (Progress, Stats) │   │  (Q&A Assistant)  │
+   └─────────┬─────────┘   └─────────┬─────────┘   └─────────┬─────────┘
+             │                       │                       │
+             └──────────────┬────────┴───────────┬───────────┘
+                            │                    │
+                            v                    v
+                ┌───────────────────┐   ┌───────────────────┐
+                │  REST API Calls   │   │ AI API Integration │
+                │  (Axios/Fetch)    │   │ (User → AI Model)  │
+                └─────────┬─────────┘   └─────────┬─────────┘
+                          │                       │
+                          v                       v
+      ┌───────────────────────────────────────────┐
+      │          Backend (Node.js + Express)       │
+      ├───────────────────────────────────────────┤
+      │ Auth: JWT + bcrypt                        │
+      │ User APIs (signup/login/profile/progress) │
+      │ Question APIs (fetch interview Qs)        │
+      │ AI APIs (query to AI model)               │
+      │ Results API (store/fetch performance)     │
+      │ Middleware: JSON parsing, JWT verify,     │
+      │             Error handling                │
+      └─────────┬────────────────────────┬────────┘
+                │                        │
+                v                        v
+      ┌───────────────────┐      ┌─────────────────────────┐
+      │   MongoDB (DB)    │      │   AI Integration Layer   │
+      ├───────────────────┤      ├─────────────────────────┤
+      │ User Collection   │     
+      │ Results/Progress  │      │ AI-based Q Gen.          │
+      │ Question Bank     │      │ Smart Interview Feedback │
+      └───────────────────┘      └─────────────────────────┘
