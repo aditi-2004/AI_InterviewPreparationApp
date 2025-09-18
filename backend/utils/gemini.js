@@ -18,7 +18,7 @@ const generateQuestion = async (topic, difficulty) => {
     console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Set' : 'Not set');
     console.log('Calling Gemini API with model: gemini-1.5-flash');
     const response = await axios.post(
-      ${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY},
+      `${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`,
       {
         contents: [
           {
@@ -64,7 +64,7 @@ const evaluateAnswer = async (question, userAnswer, idealAnswer) => {
   try {
     console.log('Calling Gemini API for evaluation');
     const response = await axios.post(
-      ${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY},
+      `${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`,
       {
         contents: [
           {
@@ -117,7 +117,7 @@ const generateTopQuestions = async (topic, difficulty = 'medium', count = 10) =>
     console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Set' : 'Not set');
     console.log('Calling Gemini API with model: gemini-1.5-flash for top questions');
     const response = await axios.post(
-      ${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY},
+      `${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`,
       {
         contents: [
           {
@@ -146,3 +146,4 @@ const generateTopQuestions = async (topic, difficulty = 'medium', count = 10) =>
 };
 
 module.exports = { generateQuestion, evaluateAnswer, generateTopQuestions };
+
