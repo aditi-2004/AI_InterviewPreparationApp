@@ -1,48 +1,53 @@
 require('dotenv').config();
 const axios = require('axios');
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const generateQuestion = async (topic, difficulty) => {
-  const prompt = `Generate a ${difficulty} level technical interview question about ${topic}. 
+  const prompt = `don't repeat the question the interview question. Generate a ${difficulty} level technical interview question about ${topic}. 
   IMPORTANT: Only respond with questions related to technical interviews, programming, algorithms, databases, or system design. 
   Do not answer any other type of questions.
   
   Format your response as JSON:
   {
-    "question": "the interview question",
+    "question": "don't repeat the question the interview question",
     "ideal_answer": "brief ideal answer or key points"
   }`;
 
   try {
-    console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Set' : 'Not set');
-    console.log('Calling Gemini API with model: gemini-1.5-flash');
+    console.log('GROQ_API_KEY:', process.env.GROQ_API_KEY ? 'Set' : 'Not set');
+    console.log('Calling Groq API with model: llama-3.3-70b-versatile');
     const response = await axios.post(
-      ${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY},
+      GROQ_API_URL,
       {
-        contents: [
+        model: 'llama-3.3-70b-versatile',
+        messages: [
           {
-            parts: [{ text: prompt }]
+            role: 'user',
+            content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1024
       },
       {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
         },
         timeout: 10000
       }
     );
 
-    let content = response.data.candidates[0].content.parts[0].text;
-    console.log('Raw Gemini API Response:', content);
+    let content = response.data.choices[0].message.content;
+    console.log('Raw Groq API Response:', content);
 
-    content = content.replace(/json\n|/g, '').trim();
+    content = content.replace(/```json\n|```/g, '').trim();
     const parsedContent = JSON.parse(content);
     return parsedContent;
   } catch (error) {
-    console.error('Gemini API Error:', error.message, error.response?.status, error.response?.data);
-    throw new Error(Failed to generate question: ${error.message});
+    console.error('Groq API Error:', error.message, error.response?.status, error.response?.data);
+    throw new Error(`Failed to generate question: ${error.message}`);
   }
 };
 
@@ -62,34 +67,39 @@ const evaluateAnswer = async (question, userAnswer, idealAnswer) => {
   }`;
 
   try {
-    console.log('Calling Gemini API for evaluation');
+    console.log('Calling Groq API for evaluation');
     const response = await axios.post(
-      ${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY},
+      GROQ_API_URL,
       {
-        contents: [
+        model: 'llama-3.3-70b-versatile',
+        messages: [
           {
-            parts: [{ text: prompt }]
+            role: 'user',
+            content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1024
       },
       {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
         },
         timeout: 10000
       }
     );
 
-    let content = response.data.candidates[0].content.parts[0].text;
-    console.log('Raw Gemini API Response:', content);
+    let content = response.data.choices[0].message.content;
+    console.log('Raw Groq API Response:', content);
 
-    content = content.replace(/json\n|/g, '').trim();
+    content = content.replace(/```json\n|```/g, '').trim();
 
     const parsedContent = JSON.parse(content);
     return parsedContent;
   } catch (error) {
-    console.error('Gemini API Error:', error.message, error.response?.status, error.response?.data);
-    throw new Error(Failed to evaluate answer: ${error.message});
+    console.error('Groq API Error:', error.message, error.response?.status, error.response?.data);
+    throw new Error(`Failed to evaluate answer: ${error.message}`);
   }
 };
 
@@ -108,40 +118,44 @@ const generateTopQuestions = async (topic, difficulty = 'medium', count = 10) =>
       {
         "question": "interview question 2",
         "ideal_answer": "brief ideal answer or key points"
-      },
-      // ... up to ${count} questions
+      }
     ]
   }`;
 
   try {
-    console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Set' : 'Not set');
-    console.log('Calling Gemini API with model: gemini-1.5-flash for top questions');
+    console.log('GROQ_API_KEY:', process.env.GROQ_API_KEY ? 'Set' : 'Not set');
+    console.log('Calling Groq API with model: llama-3.3-70b-versatile for top questions');
     const response = await axios.post(
-      ${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY},
+      GROQ_API_URL,
       {
-        contents: [
+        model: 'llama-3.3-70b-versatile',
+        messages: [
           {
-            parts: [{ text: prompt }]
+            role: 'user',
+            content: prompt
           }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 2048
       },
       {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
         },
         timeout: 10000
       }
     );
 
-    let content = response.data.candidates[0].content.parts[0].text;
-    console.log('Raw Gemini API Response for top questions:', content);
+    let content = response.data.choices[0].message.content;
+    console.log('Raw Groq API Response for top questions:', content);
 
-    content = content.replace(/json\n|/g, '').trim();
+    content = content.replace(/```json\n|```/g, '').trim();
     const parsedContent = JSON.parse(content);
     return parsedContent.questions || [];
   } catch (error) {
-    console.error('Gemini API Error for top questions:', error.message, error.response?.status, error.response?.data);
-    throw new Error(Failed to generate top questions: ${error.message});
+    console.error('Groq API Error for top questions:', error.message, error.response?.status, error.response?.data);
+    throw new Error(`Failed to generate top questions: ${error.message}`);
   }
 };
 
