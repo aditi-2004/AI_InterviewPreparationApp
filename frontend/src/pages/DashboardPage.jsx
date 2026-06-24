@@ -12,7 +12,6 @@ const DashboardPage = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [debugInfo, setDebugInfo] = useState([]);
 
   const handleStartInterview = () => {
     navigate('/interview');
@@ -23,66 +22,41 @@ const DashboardPage = () => {
     navigate('/login');
   };
 
-  const addDebugInfo = (message) => {
-    const timestamp = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
-    setDebugInfo(prev => [...prev, { message, timestamp }]);
-  };
-
   const handleTopicClick = async (topic) => {
     setSelectedTopic(topic);
     setLoading(true);
     setError(null);
-    setDebugInfo([]); 
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        const attemptMessage = `Attempt ${attempt} to fetch questions for ${topic}`;
-        addDebugInfo(attemptMessage);
-        console.log(`${attemptMessage} at ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}`);
-        
-        // const response = await fetch(`http://localhost:5000/api/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
-                const response = await fetch(`https://ai-interviewpreparationapp-1.onrender.com/api/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        const statusMessage = `Response status: ${response.status}`;
-        addDebugInfo(statusMessage);
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const data = await response.json();
-        const dataMessage = `Received data: ${JSON.stringify(data, null, 2)}`;
-        addDebugInfo(dataMessage);
-        console.log('Parsed Response Data:', data);
-        
-        if (data.success && Array.isArray(data.questions)) {
-          setQuestions(data.questions);
-          addDebugInfo(`Successfully loaded ${data.questions.length} questions`);
-          setLoading(false);
-          return;
-        } else {
-          throw new Error('Invalid response format: "questions" array not found or success is false');
-        }
-      } catch (err) {
-        const errorMessage = `Error fetching questions (Attempt ${attempt}): ${err.message}`;
-        addDebugInfo(errorMessage);
-        console.error(errorMessage);
-        if (attempt === 3) {
-          setError(`Failed to load questions. Please try again. Error: ${err.message}`);
-        }
+    try {
+      const backendUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:5000/api'
+        : 'https://ai-interviewpreparationapp-1.onrender.com/api';
+      const response = await fetch(`${backendUrl}/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const data = await response.json();
+      if (data.success && Array.isArray(data.questions)) {
+        setQuestions(data.questions);
+      } else {
+        throw new Error('Invalid response format');
       }
+    } catch (err) {
+      console.error(err);
+      setError(`Failed to load questions. Please try again.`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleClosePopup = () => {
     setSelectedTopic(null);
     setQuestions([]);
     setError(null);
-    setDebugInfo([]);
   };
 
   return (
@@ -188,20 +162,7 @@ const DashboardPage = () => {
                 <button className="close-btn" onClick={handleClosePopup}>×</button>
               </div>
               
-              {/* Debug Information Box */}
-              {debugInfo.length > 0 && (
-                <div className="debug-box">
-                  <h4>📊 Request Information</h4>
-                  <div className="debug-content">
-                    {debugInfo.map((info, index) => (
-                      <div key={index} className="debug-item">
-                        <span className="debug-timestamp">[{info.timestamp}]</span>
-                        <span className="debug-message">{info.message}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+
               
               {loading && (
                 <div className="loading-box">
@@ -238,7 +199,7 @@ const DashboardPage = () => {
                 </div>
               )}
               
-              {!loading && !error && questions.length === 0 && debugInfo.length > 0 && (
+              {!loading && !error && questions.length === 0 && (
                 <div className="no-questions-box">
                   <p>No questions available at the moment.</p>
                 </div>
@@ -252,7 +213,7 @@ const DashboardPage = () => {
         )}
       </main>
 
-      <style jsx>{`
+      <style>{`
         .dashboard-page {
           min-height: 100vh;
           background: #f8f9fa;

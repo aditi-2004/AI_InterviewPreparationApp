@@ -1,41 +1,106 @@
-                           ┌─────────────────────┐
-                           │        User         │     │
-                           └─────────┬───────────┘
-                                     │
-              ┌──────────────────────┼──────────────────────┐
-              │                      │                      │
-              v                      v                      v
-   ┌───────────────────┐   ┌───────────────────┐   ┌───────────────────┐
-   │ Authentication UI │   │   Dashboard UI    │   │   AI Chatbot UI   │
-   │ (Signup/Login)    │   │ (Progress, Stats) │   │  (Q&A Assistant)  │
-   └─────────┬─────────┘   └─────────┬─────────┘   └─────────┬─────────┘
-             │                       │                       │
-             └──────────────┬────────┴───────────┬───────────┘
-                            │                    │
-                            v                    v
-                ┌───────────────────┐   ┌───────────────────┐
-                │  REST API Calls   │   │ AI API Integration │
-                │  (Axios/Fetch)    │   │ (User → AI Model)  │
-                └─────────┬─────────┘   └─────────┬─────────┘
-                          │                       │
-                          v                       v
-      ┌───────────────────────────────────────────┐
-      │          Backend (Node.js + Express)       │
-      ├───────────────────────────────────────────┤
-      │ Auth: JWT + bcrypt                        │
-      │ User APIs (signup/login/profile/progress) │
-      │ Question APIs (fetch interview Qs)        │
-      │ AI APIs (query to AI model)               │
-      │ Results API (store/fetch performance)     │
-      │ Middleware: JSON parsing, JWT verify,     │
-      │             Error handling                │
-      └─────────┬────────────────────────┬────────┘
-                │                        │
-                v                        v
-      ┌───────────────────┐      ┌─────────────────────────┐
-      │   MongoDB (DB)    │      │   AI Integration Layer   │
-      ├───────────────────┤      ├─────────────────────────┤
-      │ User Collection   │     
-      │ Results/Progress  │      │ AI-based Q Gen.          │
-      │ Question Bank     │      │ Smart Interview Feedback │
-      └───────────────────┘      └─────────────────────────┘
+{
+    "accountNumber": "AC1768647665727",
+    "customerId": "dc1b2748-7473-4c2f-9363-6e8079f323c7",
+    "kycStatus": "Pending",
+    "password": "Temp@2331",
+    "success": true
+}
+
+{
+  "name": "Rahul Sharma",
+  "email": "rahul@example.com",
+  "phone": "9876543210",
+  "dob": "1990-05-15",
+  "gender": "Male",
+  "address": "123 MG Road, Ambala",
+  "aadhaar": "123412341234",
+  "pan": "ABCDE1234F",
+  "branch_name": "Ambala Main Branch",
+  "account_type": "Savings",
+  "nominee": {
+    "name": "Priya Sharma",
+    "relation": "Wife",
+    "dob": "1995-05-15"
+  }
+}
+
+
+{
+    "accountNumber": "AC1768647786229",
+    "customerId": "709541aa-e89d-4892-ba09-54592497fead",
+    "kycStatus": "Pending",
+    "password": "Temp@1606",
+    "success": true
+}
+{
+  "name": "Amit Verma",
+  "email": "amit.verma@example.com",
+  "phone": "9123456780",
+  "dob": "1988-11-20",
+  "gender": "Male",
+  "address": "45 Civil Lines, Chandigarh",
+  "aadhaar": "567856785678",
+  "pan": "PQRSX6789L",
+  "branch_name": "Chandigarh Sector 17",
+  "account_type": "Current",
+  "nominee": {
+    "name": "Neha Verma",
+    "relation": "Wife",
+    "dob": "1991-03-12"
+  }
+}
+
+
+
+{
+    "accountNumber": "AC1768647815980",
+    "customerId": "4f38d811-58be-4704-be54-fa44cdae882e",
+    "kycStatus": "Pending",
+    "password": "Temp@9422",
+    "success": true
+}
+{
+  "name": "Sunita Kapoor",
+  "email": "sunita.kapoor@example.com",
+  "phone": "9988776655",
+  "dob": "1992-02-08",
+  "gender": "Female",
+  "address": "78 Model Town, Ludhiana",
+  "aadhaar": "234523452345",
+  "pan": "LMNOP4567Q",
+  "branch_name": "Ludhiana Model Town",
+  "account_type": "Savings",
+  "nominee": {
+    "name": "Rohit Kapoor",
+    "relation": "Husband",
+    "dob": "1990-07-19"
+  }
+}
+
+
+
+{
+    "accountNumber": "AC1768647859232",
+    "customerId": "b2a7e33b-9a10-433b-ae3e-7959b95d02e0",
+    "kycStatus": "Pending",
+    "password": "Temp@6392",
+    "success": true
+}
+{
+  "name": "Karan Malhotra",
+  "email": "karan.malhotra@example.com",
+  "phone": "7766554433",
+  "dob": "1991-01-18",
+  "gender": "Male",
+  "address": "9 Koregaon Park, Pune",
+  "aadhaar": "456745674567",
+  "pan": "ASDFG6543K",
+  "branch_name": "Pune Koregaon Park",
+  "account_type": "Savings",
+  "nominee": {
+    "name": "Simran Malhotra",
+    "relation": "Mother",
+    "dob": "1970-08-22"
+  }
+}
+

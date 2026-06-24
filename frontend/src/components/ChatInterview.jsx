@@ -197,7 +197,7 @@ const ChatInterview = ({ interviewData, onEndInterview }) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .chat-interview {
           height: 100vh;
           display: flex;

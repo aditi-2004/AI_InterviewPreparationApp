@@ -674,22 +674,7 @@ const AnalyticsDashboard = () => {
         ))}
       </div>
 
-      {/* Debug Information Panel - Remove in production */}
-      <div style={{
-        background: '#f3f4f6',
-        padding: '1rem',
-        borderRadius: '8px',
-        marginBottom: '2rem',
-        fontSize: '0.875rem',
-        color: '#374151',
-        fontFamily: 'monospace'
-      }}>
-        <strong>Debug Info:</strong> Analytics: {analytics ? 'Yes' : 'No'} | 
-        History: {history.length} items | 
-        Topics: {processedData?.topicData?.length || 0} | 
-        Version: {dataVersion} | 
-        Processed: {processedData ? 'Yes' : 'No'}
-      </div>
+
 
       {/* Enhanced Charts Grid */}
       <div style={{

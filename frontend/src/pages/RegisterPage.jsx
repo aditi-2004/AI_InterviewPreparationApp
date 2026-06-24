@@ -43,7 +43,7 @@ const RegisterPage = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .register-page {
           min-height: 100vh;
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);

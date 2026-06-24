@@ -95,7 +95,7 @@ const AuthForm = ({ mode, onSuccess }) => {
         </button>
       </form>
       
-      <style jsx>{`
+      <style>{`
         .auth-form {
           max-width: 400px;
           margin: 0 auto;

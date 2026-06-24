@@ -39,7 +39,7 @@ const LoginPage = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .login-page {
           min-height: 100vh;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
