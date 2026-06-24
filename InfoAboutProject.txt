@@ -1,41 +1,126 @@
- ┌─────────────────────┐
-                           │        User         │     │
-                           └─────────┬───────────┘
-                                     │
-              ┌──────────────────────┼──────────────────────┐
-              │                      │                      │
-              v                      v                      v
-   ┌───────────────────┐   ┌───────────────────┐   ┌───────────────────┐
-   │ Authentication UI │   │   Dashboard UI    │   │   AI Chatbot UI   │
-   │ (Signup/Login)    │   │ (Progress, Stats) │   │  (Q&A Assistant)  │
-   └─────────┬─────────┘   └─────────┬─────────┘   └─────────┬─────────┘
-             │                       │                       │
-             └──────────────┬────────┴───────────┬───────────┘
-                            │                    │
-                            v                    v
-                ┌───────────────────┐   ┌───────────────────┐
-                │  REST API Calls   │   │ AI API Integration │
-                │  (Axios/Fetch)    │   │ (User → AI Model)  │
-                └─────────┬─────────┘   └─────────┬─────────┘
-                          │                       │
-                          v                       v
-      ┌───────────────────────────────────────────┐
-      │          Backend (Node.js + Express)       │
-      ├───────────────────────────────────────────┤
-      │ Auth: JWT + bcrypt                        │
-      │ User APIs (signup/login/profile/progress) │
-      │ Question APIs (fetch interview Qs)        │
-      │ AI APIs (query to AI model)               │
-      │ Results API (store/fetch performance)     │
-      │ Middleware: JSON parsing, JWT verify,     │
-      │             Error handling                │
-      └─────────┬────────────────────────┬────────┘
-                │                        │
-                v                        v
-      ┌───────────────────┐      ┌─────────────────────────┐
-      │   MongoDB (DB)    │      │   AI Integration Layer   │
-      ├───────────────────┤      ├─────────────────────────┤
-      │ User Collection   │     
-      │ Results/Progress  │      │ AI-based Q Gen.          │
-      │ Question Bank     │      │ Smart Interview Feedback │
-      └───────────────────┘      └─────────────────────────┘
+================================================================================
+                    AI-POWERED INTERVIEW ECOSYSTEM & ARCHITECTURE
+================================================================================
+
+                           ┌───────────────────────┐
+                           │      User Client      │
+                           └───────────┬───────────┘
+                                       │
+            ┌──────────────────────────┼──────────────────────────┐
+            │                          │                          │
+            v                          v                          v
+┌───────────────────────┐  ┌───────────────────────┐  ┌───────────────────────┐
+│     Authentication    │  │  Dashboard & Roadmaps │  │   Live Mock Sandbox   │
+│   (Tailwind v3.4 Card)│  │ (Analytics, Roadmaps) │  │  (Splitscreen Coding) │
+└───────────┬───────────┘  └───────────┬───────────┘  └───────────┬───────────┘
+            │                          │                          │
+            └──────────────────────────┼──────────────────────────┘
+                                       │  (Axios REST + JWT Interceptor)
+                                       v
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         Backend (Node.js + Express)                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Auth Service: JWT Sign-in / Verification + bcrypt                         │
+│ • Resume Parser Service: pdf-parse (instantiated PDFParse extraction)       │
+│ • Interview Orchestrator: Session tracking, compilers, and grading          │
+│ • Analytics Processor: User stats compiler (recharts-ready REST JSON)       │
+│ • RAG Knowledge Retrieval: Database preparation resource query              │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │
+                  ┌────────────────────┴────────────────────┐
+                  │                                         │
+                  v                                         v
+┌───────────────────────────────────┐    ┌───────────────────────────────────┐
+│         MongoDB (Database)        │    │    AI Agent Integration Layer     │
+├───────────────────────────────────┤    ├───────────────────────────────────┤
+│ • User Schema (Credentials)       │    │ • Resume Agent: Gemini Structured │
+│ • Resume Schema (Parsed Skills)   │    │   Skills & Project Extractor      │
+│ • Interview Schema (Scorecards)   │    │ • Interview Agent: Adaptive       │
+│ • Answer Schema (Feedback Rating) │    │   Question & Follow-up Generator  │
+│ • Knowledge Schema (Prep Notes)   │    │ • Scorer Agent: Grading Rubric    │
+│ • Analytics Schema (Performances) │    │   Readiness Metrics Evaluator     │
+│ • Question Schema (Canned Qs)     │    │ • Roadmap Agent: Adaptive Study   │
+└───────────────────────────────────┘    │   Phases Milestone Generator      │
+                                         └───────────────────────────────────┘
+
+================================================================================
+                         PROJECT DIRECTORY STRUCTURE
+================================================================================
+
+ai-interview-prep/
+├── backend/                             # Express Server + MongoDB Connection
+│   ├── config/                          # Configuration files
+│   │   └── db.js                        # Mongoose MongoDB local/remote hook
+│   ├── controllers/                     # Endpoint controllers (JSON payload API)
+│   │   ├── authController.js            # JWT login / signup handlers
+│   │   ├── resumeController.js          # PDF uploads and parser invoke
+│   │   ├── interviewController.js       # Mock sessions, compilations & scoring
+│   │   ├── analyticsController.js       # Aggregated charts REST compiler
+│   │   └── coachingController.js        # Personal materials & roadmaps handler
+│   ├── middleware/                      # Request interception
+│   │   ├── authMiddleware.js            # Authentication route guards
+│   │   └── fileUploadMiddleware.js      # Multer file buffer upload memory state
+│   ├── models/                          # Mongoose schema definitions
+│   │   ├── User.js, Resume.js, Interview.js, Answer.js,
+│   │   │   KnowledgeDoc.js, Analytics.js, Question.js
+│   ├── routes/                          # REST API Express routers
+│   │   └── authRoutes.js, resumeRoutes.js, interviewRoutes.js,
+│   │       analyticsRoutes.js, coachingRoutes.js
+│   ├── services/                        # RAG & AI Orchestration layer
+│   │   ├── agents/                      # LLM Agents core definitions
+│   │   │   ├── resumeAgent.js           # Resume parsers
+│   │   │   ├── interviewAgent.js        # Conversation / scorecards
+│   │   │   └── roadmapAgent.js          # Adaptive study plan compilers
+│   │   └── ragService.js                # preparation documents matching
+│   ├── utils/                           # Core auxiliary classes
+│   │   └── gemini.js                    # LLM API connection wrapper
+│   └── server.js                        # App initialization & port binding
+│
+├── frontend/                            # React Single-Page Application (SPA)
+│   ├── src/
+│   │   ├── api/
+│   │   │   └── index.js                 # Axios endpoints + 401 redirect interceptor
+│   │   ├── context/
+│   │   │   └── AuthContext.js           # JWT application status hook
+│   │   ├── components/                  # Reusable dashboard widgets
+│   │   │   ├── ResumeUploader.jsx       # Drag-and-drop resume workspace
+│   │   │   ├── TopicSelector.jsx        # Interview configuration selects
+│   │   │   ├── ChatInterview.jsx        # Live coding split sandbox workspace
+│   │   │   ├── LearningRoadmap.jsx      # Phase milestone checksheets
+│   │   │   └── AnalyticsDashboard.jsx   # Radar, bar & line charts container
+│   │   ├── pages/                       # Screen routes templates
+│   │   │   ├── DashboardPage.jsx        # Root user analytics tabbed space
+│   │   │   ├── InterviewPage.jsx        # Mock interview selection / workspace
+│   │   │   ├── LoginPage.jsx            # Sleek entry grid interface
+│   │   │   └── RegisterPage.jsx         # Sign up benefits board
+│   │   ├── App.js                       # Protective routes configurations
+│   │   ├── index.js                     # Root virtual dom mount
+│   │   └── index.css                    # Tailwind CSS entry directive imports
+│   ├── tailwind.config.js               # Styling framework scan configs
+│   └── postcss.config.js                # CSS parser configuration
+│
+└── InfoAboutProject.txt                 # Architecture documentation (This file)
+
+================================================================================
+                          CORE FUNCTIONAL ECOSYSTEM
+================================================================================
+
+1. AI RESUME COACHING:
+   Users upload their resume in PDF format. The `PDFParse` class extracts raw text, 
+   and the AI Resume Agent parses it into structured skills, experience, and 
+   projects. The Adaptive Mock Interview Agent then customizes questions specifically
+   tailored to the user's background.
+
+2. ADAPTIVE LIVE INTERVIEW SANDBOX:
+   Simulates full technical and behavioral interviews. Features a splitscreen coding 
+   environment with multiple programming language options and a local compiler 
+   response feedback interface. It evaluates logic, complexity, and coding style.
+
+3. STRUCTURED REPORTING & SCORING:
+   Graded with a readiness score, complete with detailed indicators of strengths, 
+   weaknesses, gaps, and exact actionable suggestions.
+
+4. ROADMAPS & ADAPTIVE STUDY PLANS:
+   Based on interview results, the Coaching Agent automatically generates study phases 
+   with checkpoints, resource recommendations, and checklists to guide users on 
+   improving their weak areas.
