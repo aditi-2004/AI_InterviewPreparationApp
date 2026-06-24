@@ -27,18 +27,15 @@ const DashboardPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const backendUrl = window.location.hostname === 'localhost'
-        ? 'http://localhost:5000/api'
-        : 'https://ai-interviewpreparationapp-1.onrender.com/api';
-      const response = await fetch(`${backendUrl}/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
+      const response = await fetch(`https://ai-interviewpreparationapp-1.onrender.com/api/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      
+
       const data = await response.json();
       if (data.success && Array.isArray(data.questions)) {
         setQuestions(data.questions);
@@ -68,22 +65,22 @@ const DashboardPage = () => {
             <h1>AI Interview Prep</h1>
             <span className="tagline">Technical Interview Practice</span>
           </div>
-          
+
           <nav className="nav-tabs">
-            <button 
+            <button
               className={`nav-tab ${activeTab === 'overview' ? 'active' : ''}`}
               onClick={() => setActiveTab('overview')}
             >
               Overview
             </button>
-            <button 
+            <button
               className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`}
               onClick={() => setActiveTab('analytics')}
             >
               Analytics
             </button>
           </nav>
-          
+
           <div className="user-section">
             <div className="user-info">
               <span className="greeting">Hello, {user?.name}</span>
@@ -118,7 +115,7 @@ const DashboardPage = () => {
                   <h4>Start Interview</h4>
                   <p>Begin a new AI-powered technical interview session</p>
                 </div>
-                
+
                 <div className="action-card" onClick={() => setActiveTab('analytics')}>
                   <div className="action-icon">📊</div>
                   <h4>View Analytics</h4>
@@ -161,22 +158,22 @@ const DashboardPage = () => {
                 <h3>Top 10 Interview Questions for {selectedTopic}</h3>
                 <button className="close-btn" onClick={handleClosePopup}>×</button>
               </div>
-              
 
-              
+
+
               {loading && (
                 <div className="loading-box">
                   <div className="loading-spinner"></div>
                   <p>Loading questions...</p>
                 </div>
               )}
-              
+
               {error && (
                 <div className="error-box">
                   <p>❌ {error}</p>
                 </div>
               )}
-              
+
               {!loading && !error && questions.length > 0 && (
                 <div className="questions-container">
                   <div className="success-message">
@@ -198,13 +195,13 @@ const DashboardPage = () => {
                   </div>
                 </div>
               )}
-              
+
               {!loading && !error && questions.length === 0 && (
                 <div className="no-questions-box">
                   <p>No questions available at the moment.</p>
                 </div>
               )}
-              
+
               <div className="modal-footer">
                 <button className="close-button" onClick={handleClosePopup}>Close</button>
               </div>
