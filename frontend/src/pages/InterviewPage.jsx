@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TopicSelector from '../components/TopicSelector';
 import ChatInterview from '../components/ChatInterview';
 import { interviewAPI } from '../api';
+import { ArrowLeft, AlertTriangle, X, CheckSquare, Settings } from 'lucide-react';
 
 const InterviewPage = () => {
   const [currentStep, setCurrentStep] = useState('selection'); // 'selection' or 'interview'
@@ -33,247 +34,101 @@ const InterviewPage = () => {
   };
 
   return (
-    <div className="interview-page">
+    <div className="min-h-screen bg-slate-50">
       {currentStep === 'selection' ? (
-        <div className="selection-wrapper">
-          <div className="header">
-            <button onClick={() => navigate('/dashboard')} className="back-btn">
-              ← Back to Dashboard
+        <div className="py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center max-w-5xl mx-auto px-6 gap-4 mb-6">
+            <button 
+              onClick={() => navigate('/dashboard')} 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition duration-150 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Dashboard
             </button>
-            <h1>AI Technical Interview</h1>
-            <div className="placeholder"></div>
+            <h1 className="text-2xl font-bold text-slate-800">AI Coaching Workspace</h1>
+            <div className="w-[120px] hidden sm:block"></div>
           </div>
           
           {error && (
-            <div className="error-banner">
-              <div className="error-content">
-                <span className="error-icon">⚠️</span>
+            <div className="max-w-5xl mx-auto px-6 mb-6">
+              <div className="bg-red-50 text-red-700 border border-red-200 p-4 rounded-xl flex items-center gap-3 text-sm">
+                <AlertTriangle className="w-5 h-5 shrink-0 text-red-500" />
                 <span>{error}</span>
-                <button onClick={() => setError('')} className="close-error">×</button>
+                <button onClick={() => setError('')} className="bg-none border-none text-red-700 hover:text-red-900 text-xl cursor-pointer ml-auto"><X className="w-4 h-4" /></button>
               </div>
             </div>
           )}
           
           <TopicSelector onStartInterview={handleStartInterview} />
           
-          <div className="info-section">
-            <div className="info-cards">
-              <div className="info-card">
-                <h3>How it works</h3>
-                <ul>
-                  <li>Choose your topic and difficulty level</li>
-                  <li>Answer 5 AI-generated technical questions</li>
-                  <li>Receive instant feedback and scoring</li>
-                  <li>Review your performance analytics</li>
+          <div className="max-w-4xl mx-auto px-6 mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-800 mb-4 border-l-4 border-blue-500 pl-3 flex items-center gap-1.5"><CheckSquare className="w-4 h-4 text-blue-500" /> How it works</h3>
+                <ul className="flex flex-col gap-3 text-slate-600 text-xs leading-relaxed">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Choose your focus topic, target difficulty level, and mock round type.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Optionally upload your resume to generate tailored, experience-aware questions.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Conduct a live 5-question back-and-forth mock round with the AI coach.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Review in-depth scorecards analyzing strengths, gaps, and improvements.</span>
+                  </li>
                 </ul>
               </div>
-              <div className="info-card">
-                <h3>Tips for success</h3>
-                <ul>
-                  <li>Think aloud and explain your reasoning</li>
-                  <li>Don't be afraid to ask clarifying questions</li>
-                  <li>Focus on problem-solving approach</li>
-                  <li>Learn from the feedback provided</li>
+              
+              <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-800 mb-4 border-l-4 border-blue-500 pl-3 flex items-center gap-1.5"><Settings className="w-4 h-4 text-blue-500" /> Tips for success</h3>
+                <ul className="flex flex-col gap-3 text-slate-600 text-xs leading-relaxed">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Think aloud and provide deep, structured explanations for your answers.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>If it's a technical coding round, write compilable code inside the workspace.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Review the AI evaluation carefully to identify missing technical concepts.</span>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <div className="interview-wrapper">
-          <div className="interview-header">
-            <button onClick={handleBackToSelection} className="back-btn">
-              ← Back to Selection
+        <div className="flex flex-col h-screen bg-slate-50">
+          <div className="flex justify-between items-center px-6 py-4 bg-white border-b border-slate-200">
+            <button 
+              onClick={handleBackToSelection} 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition duration-150 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Selection
             </button>
-            <div className="interview-title">
-              <h2>Live Interview Session</h2>
-              <span className="topic-info">
+            <div className="text-right">
+              <h2 className="text-base font-bold text-slate-800 leading-tight">Live Interview Session</h2>
+              <span className="text-xs text-slate-500 font-normal">
                 {interviewData?.topic} - {interviewData?.difficulty}
               </span>
             </div>
           </div>
           
-          <ChatInterview 
-            interviewData={interviewData}
-            onEndInterview={handleEndInterview}
-          />
+          <div className="flex-1 overflow-hidden">
+            <ChatInterview 
+              interviewData={interviewData}
+              onEndInterview={handleEndInterview}
+            />
+          </div>
         </div>
       )}
-
-      <style>{`
-        .interview-page {
-          min-height: 100vh;
-          background: #f5f7fa;
-        }
-        
-        .selection-wrapper {
-          padding: 2rem 0;
-        }
-        
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 2rem 2rem;
-        }
-        
-        .header h1 {
-          color: #333;
-          margin: 0;
-          font-size: 2rem;
-        }
-        
-        .back-btn {
-          padding: 0.75rem 1.5rem;
-          background: #6c757d;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 1rem;
-          transition: background 0.2s;
-        }
-        
-        .back-btn:hover {
-          background: #5a6268;
-        }
-        
-        .placeholder {
-          width: 120px;
-        }
-        
-        .error-banner {
-          max-width: 1200px;
-          margin: 0 auto 2rem;
-          padding: 0 2rem;
-        }
-        
-        .error-content {
-          background: #f8d7da;
-          color: #721c24;
-          padding: 1rem;
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          border: 1px solid #f5c6cb;
-        }
-        
-        .error-icon {
-          font-size: 1.2rem;
-        }
-        
-        .close-error {
-          background: none;
-          border: none;
-          color: #721c24;
-          font-size: 1.5rem;
-          cursor: pointer;
-          margin-left: auto;
-          padding: 0;
-        }
-        
-        .info-section {
-          max-width: 1200px;
-          margin: 3rem auto 0;
-          padding: 0 2rem;
-        }
-        
-        .info-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-        }
-        
-        .info-card {
-          background: white;
-          padding: 2rem;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .info-card h3 {
-          color: #333;
-          margin-bottom: 1rem;
-          font-size: 1.3rem;
-        }
-        
-        .info-card ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-        
-        .info-card li {
-          padding: 0.5rem 0;
-          border-bottom: 1px solid #eee;
-          display: flex;
-          align-items: flex-start;
-          gap: 0.5rem;
-        }
-        
-        .info-card li:last-child {
-          border-bottom: none;
-        }
-        
-        .info-card li:before {
-          content: "•";
-          color: #007bff;
-          font-weight: bold;
-          margin-top: 0.1rem;
-        }
-        
-        .interview-wrapper {
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-        }
-        
-        .interview-header {
-          background: white;
-          padding: 1rem 2rem;
-          border-bottom: 1px solid #eee;
-          display: flex;
-          align-items: center;
-          gap: 2rem;
-        }
-        
-        .interview-title h2 {
-          margin: 0;
-          color: #333;
-          font-size: 1.5rem;
-        }
-        
-        .topic-info {
-          color: #666;
-          font-size: 0.9rem;
-          font-weight: normal;
-        }
-        
-        @media (max-width: 768px) {
-          .header {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
-          }
-          
-          .placeholder {
-            display: none;
-          }
-          
-          .interview-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-          }
-          
-          .info-cards {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </div>
   );
 };

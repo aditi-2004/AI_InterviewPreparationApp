@@ -20,14 +20,41 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authAPI = {
   signup: (userData) => apiClient.post('/auth/signup', userData),
   login: (credentials) => apiClient.post('/auth/login', credentials),
 };
 
+export const resumeAPI = {
+  uploadResume: (formData) => apiClient.post('/resumes/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  getUserResumes: () => apiClient.get('/resumes'),
+};
+
 export const analyticsAPI = {
   getUserAnalytics: () => apiClient.get('/analytics/user'),
   getProgressTrends: () => apiClient.get('/analytics/trends'),
+};
+
+export const coachingAPI = {
+  getRoadmap: () => apiClient.get('/coaching/roadmap'),
+  getKnowledgeDocs: () => apiClient.get('/coaching/materials'),
+  addKnowledgeDoc: (docData) => apiClient.post('/coaching/materials', docData),
 };
 
 export const interviewAPI = {

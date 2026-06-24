@@ -46,15 +46,23 @@ const AuthForm = ({ mode, onSuccess }) => {
   };
 
   return (
-    <div className="auth-form">
-      <form onSubmit={handleSubmit}>
-        <h2>{mode === 'signup' ? 'Create Account' : 'Login'}</h2>
+    <div className="w-full max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <h2 className="text-2xl font-bold text-center text-slate-800">
+          {mode === 'signup' ? 'Create Account' : 'Welcome Back'}
+        </h2>
         
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="bg-rose-50 border border-rose-200 text-rose-600 text-xs font-semibold p-4 rounded-xl shadow-sm">
+            {error}
+          </div>
+        )}
         
         {mode === 'signup' && (
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="name" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Full Name
+            </label>
             <input
               type="text"
               id="name"
@@ -62,12 +70,16 @@ const AuthForm = ({ mode, onSuccess }) => {
               value={formData.name}
               onChange={handleChange}
               required
+              placeholder="John Doe"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-150"
             />
           </div>
         )}
         
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Email Address
+          </label>
           <input
             type="email"
             id="email"
@@ -75,11 +87,15 @@ const AuthForm = ({ mode, onSuccess }) => {
             value={formData.email}
             onChange={handleChange}
             required
+            placeholder="you@example.com"
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-150"
           />
         </div>
         
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Password
+          </label>
           <input
             type="password"
             id="password"
@@ -87,82 +103,19 @@ const AuthForm = ({ mode, onSuccess }) => {
             value={formData.password}
             onChange={handleChange}
             required
+            placeholder="••••••••"
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition duration-150"
           />
         </div>
         
-        <button type="submit" disabled={loading} className="submit-btn">
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-100 hover:shadow-lg hover:shadow-indigo-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+        >
           {loading ? 'Processing...' : (mode === 'signup' ? 'Sign Up' : 'Login')}
         </button>
       </form>
-      
-      <style>{`
-        .auth-form {
-          max-width: 400px;
-          margin: 0 auto;
-          padding: 2rem;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .auth-form h2 {
-          text-align: center;
-          margin-bottom: 2rem;
-          color: #333;
-        }
-        
-        .form-group {
-          margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-          color: #555;
-        }
-        
-        .form-group input {
-          width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 1rem;
-        }
-        
-        .form-group input:focus {
-          outline: none;
-          border-color: #007bff;
-        }
-        
-        .submit-btn {
-          width: 100%;
-          padding: 0.75rem;
-          background: #007bff;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          font-size: 1rem;
-          cursor: pointer;
-        }
-        
-        .submit-btn:hover:not(:disabled) {
-          background: #0056b3;
-        }
-        
-        .submit-btn:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
-        
-        .error-message {
-          background: #f8d7da;
-          color: #721c24;
-          padding: 0.75rem;
-          border-radius: 4px;
-          margin-bottom: 1rem;
-        }
-      `}</style>
     </div>
   );
 };

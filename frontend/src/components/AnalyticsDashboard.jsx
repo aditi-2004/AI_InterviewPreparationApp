@@ -8,8 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   Cell,
@@ -20,8 +18,6 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  ScatterChart,
-  Scatter,
 } from 'recharts';
 
 const validateAPIs = () => {
@@ -48,6 +44,35 @@ const validateAPIs = () => {
   });
 };
 
+const colorPalette = {
+  primary: ['#3b82f6', '#1d4ed8', '#1e40af', '#1e3a8a'],
+  success: ['#10b981', '#059669', '#047857', '#065f46'],
+  warning: ['#f59e0b', '#d97706', '#b45309', '#92400e'],
+  danger: ['#ef4444', '#dc2626', '#b91c1c', '#991b1b'],
+  info: ['#06b6d4', '#0891b2', '#0e7490', '#155e75'],
+  purple: ['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
+  emerald: ['#10b981', '#059669', '#047857', '#065f46'],
+  rose: ['#f43f5e', '#e11d48', '#be123c', '#9f1239'],
+  amber: ['#f59e0b', '#d97706', '#b45309', '#92400e'],
+  cyan: ['#06b6d4', '#0891b2', '#0e7490', '#155e75'],
+  violet: ['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
+  lime: ['#84cc16', '#65a30d', '#4d7c0f', '#365314']
+};
+
+const chartColors = [
+  ...colorPalette.primary,
+  ...colorPalette.success,
+  ...colorPalette.warning,
+  ...colorPalette.info,
+  ...colorPalette.purple,
+  ...colorPalette.emerald,
+  ...colorPalette.rose,
+  ...colorPalette.amber,
+  ...colorPalette.cyan,
+  ...colorPalette.violet,
+  ...colorPalette.lime
+];
+
 const AnalyticsDashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [trends, setTrends] = useState([]);
@@ -58,47 +83,10 @@ const AnalyticsDashboard = () => {
   const [loadingDetails, setLoadingDetails] = useState({});
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
-  const [dataVersion, setDataVersion] = useState(0); 
-
-
-  const colorPalette = {
-    primary: ['#3b82f6', '#1d4ed8', '#1e40af', '#1e3a8a'],
-    success: ['#10b981', '#059669', '#047857', '#065f46'],
-    warning: ['#f59e0b', '#d97706', '#b45309', '#92400e'],
-    danger: ['#ef4444', '#dc2626', '#b91c1c', '#991b1b'],
-    info: ['#06b6d4', '#0891b2', '#0e7490', '#155e75'],
-    purple: ['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
-    emerald: ['#10b981', '#059669', '#047857', '#065f46'],
-    rose: ['#f43f5e', '#e11d48', '#be123c', '#9f1239'],
-    amber: ['#f59e0b', '#d97706', '#b45309', '#92400e'],
-    cyan: ['#06b6d4', '#0891b2', '#0e7490', '#155e75'],
-    violet: ['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
-    lime: ['#84cc16', '#65a30d', '#4d7c0f', '#365314']
-  };
-
-  const chartColors = [
-    ...colorPalette.primary,
-    ...colorPalette.success,
-    ...colorPalette.warning,
-    ...colorPalette.info,
-    ...colorPalette.purple,
-    ...colorPalette.emerald,
-    ...colorPalette.rose,
-    ...colorPalette.amber,
-    ...colorPalette.cyan,
-    ...colorPalette.violet,
-    ...colorPalette.lime
-  ];
+  const [dataVersion, setDataVersion] = useState(0);
 
   const processedData = useMemo(() => {
-    console.log('🔄 Reprocessing data...', { 
-      analyticsExists: !!analytics, 
-      historyLength: history?.length || 0,
-      dataVersion 
-    });
-    
     if (!analytics && (!history || history.length === 0)) {
-      console.log('❌ No data available for processing');
       return null;
     }
 
@@ -132,7 +120,6 @@ const AnalyticsDashboard = () => {
     const topicMap = new Map();
 
     if (analytics?.topicWisePerformance && Array.isArray(analytics.topicWisePerformance)) {
-      console.log('📊 Processing analytics topics:', analytics.topicWisePerformance.length);
       analytics.topicWisePerformance.forEach(topic => {
         if (topic.topic) {
           topicMap.set(topic.topic, {
@@ -151,7 +138,6 @@ const AnalyticsDashboard = () => {
     }
 
     if (history && Array.isArray(history)) {
-      console.log('📚 Processing history topics:', history.length);
       
       const topicGroups = history.reduce((groups, interview) => {
         const topic = interview.topic;
@@ -233,10 +219,7 @@ const AnalyticsDashboard = () => {
         return b.totalQuestions - a.totalQuestions;
       });
 
-    console.log('✅ Processed topic data:', {
-      totalTopics: topicData.length,
-      topics: topicData.map(t => ({ name: t.topic, questions: t.totalQuestions, accuracy: t.accuracy }))
-    });
+
 
     const totalTopicsCovered = topicData.length;
     const averageAccuracy = topicData.length > 0 
@@ -277,11 +260,9 @@ const AnalyticsDashboard = () => {
     ];
 
     return { difficultyData, topicData, radarData };
-  }, [analytics, history, chartColors, dataVersion]);
+  }, [analytics, history]);
 
   const loadData = useCallback(async (isRefresh = false) => {
-    console.log(`🔄 ${isRefresh ? 'Refreshing' : 'Loading'} data from database...`);
-    
     if (isRefresh) {
       setRefreshing(true);
     } else {
@@ -306,49 +287,22 @@ const AnalyticsDashboard = () => {
         interviewAPI.getHistory({ _t: timestamp })
       ]);
 
-      let hasDataChanged = false;
-
       if (analyticsRes.status === 'fulfilled' && analyticsRes.value?.data) {
-        console.log('📊 Analytics data loaded:', analyticsRes.value.data);
-        const newAnalytics = analyticsRes.value.data;
-        
-        if (JSON.stringify(newAnalytics) !== JSON.stringify(analytics)) {
-          hasDataChanged = true;
-        }
-        
-        setAnalytics(newAnalytics);
+        setAnalytics(analyticsRes.value.data);
       } else {
         console.warn('⚠️ Analytics data not available:', analyticsRes.reason);
         setAnalytics(null);
       }
 
       if (trendsRes.status === 'fulfilled' && trendsRes.value?.data) {
-        console.log('📈 Trends data loaded:', trendsRes.value.data);
-        const newTrends = trendsRes.value.data || [];
-        
-        if (JSON.stringify(newTrends) !== JSON.stringify(trends)) {
-          hasDataChanged = true;
-        }
-        
-        setTrends(newTrends);
+        setTrends(trendsRes.value.data || []);
       } else {
         console.warn('⚠️ Trends data not available:', trendsRes.reason);
         setTrends([]);
       }
 
       if (historyRes.status === 'fulfilled' && historyRes.value?.data) {
-        console.log('📚 History data loaded:', historyRes.value.data);
-        const newHistory = historyRes.value.data || [];
-        
-        if (JSON.stringify(newHistory) !== JSON.stringify(history)) {
-          hasDataChanged = true;
-          console.log('🔄 History data has changed, updating...');
-        }
-        
-        setHistory(newHistory);
-        
-        const uniqueTopics = [...new Set(newHistory.map(interview => interview.topic).filter(Boolean))];
-        console.log('🏷️ Unique topics found in history:', uniqueTopics);
+        setHistory(historyRes.value.data || []);
       } else {
         console.error('❌ Failed to load history:', historyRes.reason);
         if (historyRes.reason?.message) {
@@ -356,12 +310,7 @@ const AnalyticsDashboard = () => {
         }
       }
 
-      
-      if (hasDataChanged || isRefresh) {
-        console.log('🔄 Data has changed, incrementing version...');
-        setDataVersion(prev => prev + 1);
-      }
-
+      setDataVersion(prev => prev + 1);
       setLastUpdated(new Date());
       setDetails({}); 
       
@@ -372,7 +321,7 @@ const AnalyticsDashboard = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [analytics, trends, history]);
+  }, []);
 
   const loadInterviewDetails = useCallback(async (interviewId) => {
     if (details[interviewId]) {
@@ -383,8 +332,6 @@ const AnalyticsDashboard = () => {
     setLoadingDetails(prev => ({ ...prev, [interviewId]: true }));
     
     try {
-      console.log(`🔍 Loading interview details from database for ID: ${interviewId}`);
-      
       if (typeof interviewAPI.getInterviewDetails !== 'function') {
         throw new Error('getInterviewDetails method not available in interview API');
       }
@@ -395,7 +342,6 @@ const AnalyticsDashboard = () => {
         throw new Error('Invalid response format from database');
       }
       
-      console.log('📋 Interview details loaded from database:', response.data);
       setDetails(prev => ({ ...prev, [interviewId]: response.data }));
       
     } catch (error) {
@@ -407,63 +353,29 @@ const AnalyticsDashboard = () => {
   }, [details]);
 
   useEffect(() => {
-    console.log('🚀 Component mounted, loading initial data...');
     loadData();
-  }, []); 
+  }, [loadData]); 
   const handleManualRefresh = useCallback(() => {
-    console.log('🔄 Manual refresh triggered');
     loadData(true);
   }, [loadData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log('⏰ Auto-refresh triggered');
       loadData(true);
     }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [loadData]);
 
-  useEffect(() => {
-    console.log('🔍 Data state changed:', {
-      analytics: !!analytics,
-      trendsLength: trends.length,
-      historyLength: history.length,
-      processedDataExists: !!processedData,
-      topicsCount: processedData?.topicData?.length || 0,
-      dataVersion
-    });
-  }, [analytics, trends, history, processedData, dataVersion]);
+
 
   // Enhanced loading component
   const LoadingComponent = () => (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '400px',
-      gap: '1rem'
-    }}>
-      <div style={{
-        width: '40px',
-        height: '40px',
-        border: '4px solid #f3f4f6',
-        borderTop: '4px solid #3b82f6',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite'
-      }}></div>
-      <div style={{ fontSize: '1.1rem', color: '#6b7280' }}>
+    <div className="flex flex-col justify-center items-center h-[400px] gap-4">
+      <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"></div>
+      <div className="text-lg text-slate-500 font-medium">
         Loading analytics from database...
       </div>
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
     </div>
   );
 

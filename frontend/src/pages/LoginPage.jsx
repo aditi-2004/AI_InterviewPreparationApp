@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
+import { Bot, BarChart3, Zap } from 'lucide-react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -10,147 +11,50 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="brand-section">
-          <h1>AI Interview Prep</h1>
-          <p>Master your technical interviews with AI-powered practice sessions</p>
-          <div className="features">
-            <div className="feature">
-              <span className="icon">🤖</span>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700 flex items-center justify-center p-4 md:p-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-100">
+        
+        {/* Brand Section */}
+        <div className="bg-gradient-to-br from-indigo-600 to-purple-800 text-white p-8 md:p-12 flex flex-col justify-center items-center text-center">
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">AI Interview Prep</h1>
+          <p className="text-sm md:text-base opacity-90 mb-8 max-w-xs">
+            Master your technical interviews with AI-powered practice sessions
+          </p>
+          <div className="flex flex-col gap-4 w-full max-w-xs text-left">
+            <div className="flex items-center gap-4 text-sm font-medium bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/10 transition hover:bg-white/15">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 text-white shrink-0">
+                <Bot className="w-5 h-5" />
+              </div>
               <span>AI-Powered Questions</span>
             </div>
-            <div className="feature">
-              <span className="icon">📊</span>
+            <div className="flex items-center gap-4 text-sm font-medium bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/10 transition hover:bg-white/15">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 text-white shrink-0">
+                <BarChart3 className="w-5 h-5" />
+              </div>
               <span>Performance Analytics</span>
             </div>
-            <div className="feature">
-              <span className="icon">💡</span>
+            <div className="flex items-center gap-4 text-sm font-medium bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl border border-white/10 transition hover:bg-white/15">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 text-white shrink-0">
+                <Zap className="w-5 h-5" />
+              </div>
               <span>Instant Feedback</span>
             </div>
           </div>
         </div>
         
-        <div className="form-section">
+        {/* Form Section */}
+        <div className="p-8 md:p-12 flex flex-col justify-center bg-white">
           <AuthForm mode="login" onSuccess={handleLoginSuccess} />
-          <div className="auth-links">
-            <p>Don't have an account? <Link to="/register">Sign up here</Link></p>
+          <div className="text-center mt-6 text-sm text-slate-500">
+            <p>
+              Don't have an account?{' '}
+              <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-semibold transition duration-150">
+                Sign up here
+              </Link>
+            </p>
           </div>
         </div>
       </div>
-
-      <style>{`
-        .login-page {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 1rem;
-        }
-        
-        .login-container {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          max-width: 1000px;
-          width: 100%;
-          background: white;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .brand-section {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          padding: 3rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          text-align: center;
-        }
-        
-        .brand-section h1 {
-          font-size: 2.5rem;
-          margin-bottom: 1rem;
-          font-weight: 700;
-        }
-        
-        .brand-section p {
-          font-size: 1.1rem;
-          margin-bottom: 2rem;
-          opacity: 0.9;
-        }
-        
-        .features {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        
-        .feature {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          font-size: 1rem;
-        }
-        
-        .icon {
-          font-size: 1.5rem;
-        }
-        
-        .form-section {
-          padding: 3rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-        
-        .auth-links {
-          text-align: center;
-          margin-top: 2rem;
-        }
-        
-        .auth-links a {
-          color: #007bff;
-          text-decoration: none;
-          font-weight: 500;
-        }
-        
-        .auth-links a:hover {
-          text-decoration: underline;
-        }
-        
-        @media (max-width: 768px) {
-          .login-container {
-            grid-template-columns: 1fr;
-            max-width: 400px;
-          }
-          
-          .brand-section {
-            padding: 2rem;
-          }
-          
-          .brand-section h1 {
-            font-size: 2rem;
-          }
-          
-          .features {
-            flex-direction: row;
-            justify-content: space-around;
-          }
-          
-          .feature {
-            flex-direction: column;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-          }
-          
-          .form-section {
-            padding: 2rem;
-          }
-        }
-      `}</style>
     </div>
   );
 };

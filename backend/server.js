@@ -10,6 +10,8 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/interview', require('./routes/interviewRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/resumes', require('./routes/resumeRoutes'));
+app.use('/api/coaching', require('./routes/coachingRoutes'));
 
 app.get('/api/questions/:topic', async (req, res) => {
   const { topic } = req.params;
