@@ -100,7 +100,7 @@ const InterviewPage = () => {
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .interview-page {
           min-height: 100vh;
           background: #f5f7fa;

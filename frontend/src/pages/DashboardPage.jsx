@@ -39,8 +39,10 @@ const DashboardPage = () => {
         addDebugInfo(attemptMessage);
         console.log(`${attemptMessage} at ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}`);
         
-        // const response = await fetch(`http://localhost:5000/api/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
-                const response = await fetch(`https://ai-interviewpreparationapp-1.onrender.com/api/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
+        const backendUrl = window.location.hostname === 'localhost'
+          ? 'http://localhost:5000/api'
+          : 'https://ai-interviewpreparationapp-1.onrender.com/api';
+        const response = await fetch(`${backendUrl}/questions/${encodeURIComponent(topic)}?difficulty=medium&count=10`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -252,7 +254,7 @@ const DashboardPage = () => {
         )}
       </main>
 
-      <style jsx>{`
+      <style>{`
         .dashboard-page {
           min-height: 100vh;
           background: #f8f9fa;

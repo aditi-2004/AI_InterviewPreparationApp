@@ -79,7 +79,6 @@ const submitAnswer = async (req, res) => {
     await answer.save();
 
     const interview = await Interview.findById(question.interview_id);
-    interview.totalQuestions += 1; 
     if (evaluation.is_correct) interview.correctAnswers += 1;
     await interview.save();
 
